@@ -1,7 +1,6 @@
 <?php
 /*
- * $Id: amongfriends.php 2015-03-18 aj $
- * Copyright (c) 2015 Arne Johannessen
+ * Copyright (c) 2015,2019 Arne Johannessen
  * Proprietary/Confidential. All Rights Reserved.
  * UTF-8
  */
@@ -10,19 +9,19 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.2.1
+Version: 0.4.0
 P_lugin URI: http://www.amongfriends.de/
 A_uthor URI: http://www.amongfriends.de/
 */
 
-// made for Wordpress 4.1
+// made for Wordpress 4.1, updated for 5.0
 
 
 ##################################
 
 // used Dashboard code example 'dashboard-google-pagerank' by Weston Deboer
 function AF_wp_dashboard_test() {
-	echo '<P>Die Textbearbeitung erfolgt in <A HREF="http://de.wikipedia.org/wiki/Markdown#Auszeichnungsbeispiele">Markdown</A>-Syntax (<A HREF="http://daringfireball.net/projects/markdown/syntax" HREFLANG="en">Referenz</A>).';
+	echo '<P>Die Textbearbeitung erfolgte <STRONG>vor Gutenberg</STRONG> in <A HREF="http://de.wikipedia.org/wiki/Markdown#Auszeichnungsbeispiele">Markdown</A>-Syntax (<A HREF="http://daringfireball.net/projects/markdown/syntax" HREFLANG="en">Referenz</A>).';
 }
 function AF_wp_dashboard_setup () {
 	wp_add_dashboard_widget('AF_wp_dashboard_test', 'Among Friends–Website', 'AF_wp_dashboard_test');
@@ -52,13 +51,13 @@ function SB_wp_disable_rich_editor_option () {
 		echo '<script type="text/javascript">if (document.addEventListener) { document.addEventListener("DOMContentLoaded", function () { document.getElementById("rich_editing").disabled = true; }, false); }</script>';
 	}
 }
-add_action('admin_head', 'SB_wp_disable_rich_editor_option');
+#add_action('admin_head', 'SB_wp_disable_rich_editor_option');
 
 function SB_wp_disable_rich_editor ( $user_id ) {
 	$_POST['rich_editing'] = 'false';
 }
-add_action('personal_options_update', 'SB_wp_disable_rich_editor');
-add_action('edit_user_profile_update', 'SB_wp_disable_rich_editor');
+#add_action('personal_options_update', 'SB_wp_disable_rich_editor');
+#add_action('edit_user_profile_update', 'SB_wp_disable_rich_editor');
 
 // the option is only disabled in the GUI if the user views her own profile, not if she views other user's profiles; however, even if the option is enabled, changing it won't have any effect
 
@@ -68,7 +67,7 @@ add_action('edit_user_profile_update', 'SB_wp_disable_rich_editor');
 function AF_wp_hide_html_editor_toolbar () {
 	echo '<style> .quicktags-toolbar { display:none; }  textarea#content.wp-editor-area { margin-top: 0 !important; } </script>';
 }
-add_action('admin_head', 'AF_wp_hide_html_editor_toolbar');
+#add_action('admin_head', 'AF_wp_hide_html_editor_toolbar');
 
 
 ##################################
@@ -159,26 +158,38 @@ add_filter('the_excerpt', 'SB_highlight_searchterms');
 
 
 // implement AF shortcode
-function af_upcoming_performances() {
-	$fixed_default_atts = array(
-			"category" => "announcements",
-			"ignore_sticky_posts" => "no" );
+function af_upcoming_performances($atts) {
+	if (! isset($atts['category']) || $atts['category'] == 'announcements') {
+		$atts['category'] = 'announcements';
+		$atts['orderby'] = isset($atts['orderby']) ? $atts['orderby'] : 'date';
+		$atts['order'] = isset($atts['order']) ? $atts['order'] : 'ASC';
+	}
+	elseif ($atts['category'] == 'performances') {
+		$atts['orderby'] = isset($atts['orderby']) ? $atts['orderby'] : 'date';
+		$atts['order'] = isset($atts['order']) ? $atts['order'] : 'DESC';
+	}
+	if (array_key_exists('max', $atts) && $atts['max'] > 0) {
+		$atts['showposts'] = $atts['max'];
+	}
+	$atts['ignore_sticky_posts'] = "no";
 	// call 'Posts in Page' plugin
 	if (! class_exists('ICPagePosts')) {
 		trigger_error("'Posts in Page' plugin unavailable", E_USER_WARNING);
 		return "[ic_add_posts category='announcements' ignore_sticky_posts='no']";
 	}
-	$posts = new ICPagePosts($fixed_default_atts);
-	return $posts->output_posts();
+	$posts = new ICPagePosts($atts);
+	$before = '<div class=af_upcoming_performances>';
+	$after = '</div>';
+	return $before . $posts->output_posts() . $after;
 }
 
 // make AF shortcode available (the class may not be necessary)
 class AFUpcomingPerformances {
 	public function __construct( ) {
-		add_shortcode( 'af_upcoming_performances', array( &$this, 'upcoming_performances' ) );
+		add_shortcode( 'af_upcoming', array( &$this, 'upcoming_performances' ) );
 	}
 	public function upcoming_performances( $atts ) {
-		return af_upcoming_performances();
+		return af_upcoming_performances( $atts );
 	}
 }
 function init_AFUpcomingPerformances( ) {
@@ -186,14 +197,23 @@ function init_AFUpcomingPerformances( ) {
 }
 add_action( 'plugins_loaded', 'init_AFUpcomingPerformances' );
 
-// make AF shortcode available in category description (used on performances page)
+// make AF shortcode available in category description (used on performances page of the 1.4 theme)
 function af_upcoming_performances_category_filter ($description, $category) {
 	if (is_admin()) {
 		return $description;
 	}
-	return str_replace('[af_upcoming_performances]', af_upcoming_performances(), $description);
+	return str_replace('[af_upcoming]', af_upcoming_performances([]), $description);
 }
 add_filter('category_description', 'af_upcoming_performances_category_filter', 10, 2);
+
+#################################
+
+# Gutenberg stuff
+
+# to disable embeds:
+# https://rudrastyh.com/gutenberg/remove-default-blocks.html
+# https://wordpress.org/gutenberg/handbook/designers-developers/developers/filters/block-filters/
+
 
 
 ?>
