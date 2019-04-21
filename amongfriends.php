@@ -1,8 +1,10 @@
 <?php
 /*
  * Copyright (c) 2015,2019 Arne Johannessen
- * Proprietary/Confidential. All Rights Reserved.
- * UTF-8
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version. See LICENSE for details.
  */
 
 /*
@@ -10,8 +12,8 @@ Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
 Version: 0.4.0
-P_lugin URI: http://www.amongfriends.de/
-A_uthor URI: http://www.amongfriends.de/
+Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
+Author URI: https://github.com/johannessen
 */
 
 // made for Wordpress 4.1, updated for 5.0
