@@ -11,7 +11,7 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.4.0
+Version: 0.4.1
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -44,32 +44,6 @@ function SB_wp_xml2html_ob_start () {
 	ob_start('SB_wp_xml2html');
 }
 add_action('get_header', 'SB_wp_xml2html_ob_start');
-
-
-##################################
-
-function SB_wp_disable_rich_editor_option () {
-	if (defined('IS_PROFILE_PAGE') && IS_PROFILE_PAGE) {
-		echo '<script type="text/javascript">if (document.addEventListener) { document.addEventListener("DOMContentLoaded", function () { document.getElementById("rich_editing").disabled = true; }, false); }</script>';
-	}
-}
-#add_action('admin_head', 'SB_wp_disable_rich_editor_option');
-
-function SB_wp_disable_rich_editor ( $user_id ) {
-	$_POST['rich_editing'] = 'false';
-}
-#add_action('personal_options_update', 'SB_wp_disable_rich_editor');
-#add_action('edit_user_profile_update', 'SB_wp_disable_rich_editor');
-
-// the option is only disabled in the GUI if the user views her own profile, not if she views other user's profiles; however, even if the option is enabled, changing it won't have any effect
-
-
-##################################
-
-function AF_wp_hide_html_editor_toolbar () {
-	echo '<style> .quicktags-toolbar { display:none; }  textarea#content.wp-editor-area { margin-top: 0 !important; } </script>';
-}
-#add_action('admin_head', 'AF_wp_hide_html_editor_toolbar');
 
 
 ##################################
@@ -119,45 +93,7 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 }
 
 
-
-
-/*
-
 ##################################
-
-// try to fix catgeory links
-function SB_wp_remove_category_from_category_link ($catlink, $category_id) {
-	$XML = array('/category/allgemein', '/category/');
-	$HTML = array('/', '/');
-	return str_replace($XML, $HTML, $catlink);
-}
-add_filter('category_link', 'SB_wp_remove_category_from_category_link', 10, 2);
-
-
-##################################
-
-function SB_highlight_searchterms ($the_content) {
-	$searchterm = FALSE;
-	if (array_key_exists('s', $_GET)) {
-		$searchterm = $_GET['s'];
-	}
-	elseif (array_key_exists('HTTP_REFERER', $_SERVER)) {
-		$pregResult = NULL;
-		$searchterm = preg_match('/\/\/[^\/]*\/\?(?:.*&)?s=([^&]+)/', $_SERVER["HTTP_REFERER"], $pregResult) ? $pregResult[1] : FALSE;
-	}
-	if (! $searchterm) {
-		// not a search result page, move along
-		return $the_content;
-	}
-	
-	$pattern = '/>([^<>]*)(' . preg_quote($searchterm) . ')([^<>]*)</i';
-	$replacement = '>$1<SPAN CLASS="searchterm">$2</SPAN>$3<';
-	return preg_replace($pattern, $replacement, $the_content);
-}
-add_filter('the_content', 'SB_highlight_searchterms');
-add_filter('the_excerpt', 'SB_highlight_searchterms');
-*/
-
 
 // implement AF shortcode
 function af_upcoming_performances($atts) {
