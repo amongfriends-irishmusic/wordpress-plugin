@@ -11,7 +11,7 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.5.1
+Version: 0.6.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -167,6 +167,13 @@ function af_upcoming_performances_category_filter ($description, $category) {
 	return str_replace('[af_upcoming]', af_upcoming_performances([]), $description);
 }
 add_filter('category_description', 'af_upcoming_performances_category_filter', 10, 2);
+
+#################################
+
+# disable Emoji stuff (for which Wordpress has a privacy leak as of 5.1)
+add_filter( 'emoji_svg_url', '__return_false' );
+remove_action('wp_head', 'print_emoji_detection_script', 7);
+remove_action('wp_print_styles', 'print_emoji_styles');
 
 #################################
 
