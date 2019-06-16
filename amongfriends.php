@@ -11,7 +11,7 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.7.0
+Version: 0.7.1
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -173,6 +173,9 @@ add_filter('category_description', 'af_upcoming_performances_category_filter', 1
 add_filter( 'emoji_svg_url', '__return_false' );
 remove_action('wp_head', 'print_emoji_detection_script', 7);
 remove_action('wp_print_styles', 'print_emoji_styles');
+
+# meta name=generator is something we dislike
+remove_action( 'wp_head' , 'wp_generator' );
 
 #################################
 
