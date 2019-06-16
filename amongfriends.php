@@ -11,12 +11,12 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.6.1
+Version: 0.7.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
 
-// made for Wordpress 4.1, updated for 5.0
+// known minimum WP version 4.9, only tested with 5.2
 
 
 #################################
@@ -45,9 +45,8 @@ add_filter('content_save_pre', 'AF_secure_http_links');
 
 ##################################
 
-// used Dashboard code example 'dashboard-google-pagerank' by Weston Deboer
 function AF_wp_dashboard_test() {
-	echo '<P>Die Textbearbeitung erfolgte <STRONG>vor Gutenberg</STRONG> in <A HREF="http://de.wikipedia.org/wiki/Markdown#Auszeichnungsbeispiele">Markdown</A>-Syntax (<A HREF="http://daringfireball.net/projects/markdown/syntax" HREFLANG="en">Referenz</A>).';
+	echo '<p><a href="/wp-admin/tools.php?page=af_server_conf">Server-Konfiguration</a>';
 }
 function AF_wp_dashboard_setup () {
 	wp_add_dashboard_widget('AF_wp_dashboard_test', 'Among Friends–Website', 'AF_wp_dashboard_test');
@@ -179,6 +178,49 @@ remove_action('wp_print_styles', 'print_emoji_styles');
 
 # comments are currently disabled on this site, so a Comments feed doesn't make sense
 add_filter( 'feed_links_show_comments_feed', '__return_false' );
+
+#################################
+
+# offer config files to user
+function AF_server_conf_menu_setup () {
+	add_management_page( 'Among Friends: Server-Konfiguration', 'Server-Konfig', 'manage_options', 'af_server_conf', 'AF_server_conf_menu' );
+}
+function AF_server_conf_menu () {
+	$settings = wp_enqueue_code_editor( array(
+		'type' => 'text/nginx',
+		'codemirror' => array('readOnly'=>'nocursor') )
+	);
+	if ( FALSE !== $settings ) {
+		$settings = wp_json_encode( $settings );
+		wp_add_inline_script( 'code-editor', sprintf('wp.codeEditor.initialize( "af-aliases", %s );', $settings) );
+		wp_add_inline_script( 'code-editor', sprintf('wp.codeEditor.initialize( "af-siteconf", %s );', $settings) );
+		wp_add_inline_script( 'code-editor', sprintf('wp.codeEditor.initialize( "af-htaccess", %s );', $settings) );
+	}
+	?>
+	<h2>Among Friends: Server-Konfiguration</h2>
+	<p>Im Folgenden werden die Inhalte einiger wichtiger Konfigurationsdateien für Among Friends gezeigt. Bei Änderungsvorschlägen bitte Kontakt mit Arne aufnehmen.
+	<p title='/etc/postfix/virtual (Auszug)'>Aliase im E-Mail–Server:
+	<p><textarea id=af-aliases rows=15 cols=30><?php
+	$virtual = file_get_contents('/etc/postfix/virtual');
+	$header = '## Among Friends';
+	$from = strpos($virtual, $header) + strlen($header);
+	$to = strpos($virtual, '#####', $from);
+	echo substr($virtual, $from, $to - $from);
+	?>
+## RFC-required / network-related aliases
+postmaster@ postmaster
+abuse@ root</textarea>
+	<p title='/etc/apache2/sites-available/irishmusic-wp.include'>Apache VirtualHost:
+	<p><textarea id=af-siteconf rows=15 cols=30><?php
+	echo htmlspecialchars(file_get_contents('/etc/apache2/sites-available/irishmusic-wp.include'));
+	?></textarea>
+	<p title='<?php echo $_SERVER['DOCUMENT_ROOT'] . '/.htaccess'; ?>'>Apache htaccess:
+	<p><textarea id=af-htaccess rows=15 cols=30><?php
+	echo htmlspecialchars(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/.htaccess'));
+	?></textarea>
+	<?php
+}
+add_action('admin_menu', 'AF_server_conf_menu_setup');
 
 #################################
 
