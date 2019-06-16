@@ -11,13 +11,27 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.4.1
+Version: 0.5.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
 
 // made for Wordpress 4.1, updated for 5.0
 
+
+#################################
+
+// implement special HTTP status code for former members
+// (set custom page field "af-http-status" to "410")
+
+if ( ! is_admin() ) {
+	add_action( 'template_redirect', 'AF_http_status' );
+}
+function AF_http_status() {
+	if (get_post_meta(get_the_ID(), 'af-http-status', TRUE) == 410) {
+		header('HTTP/1.1 410 Gone');
+	}
+}
 
 ##################################
 
