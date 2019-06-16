@@ -11,7 +11,7 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.7.1
+Version: 0.8.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -228,6 +228,18 @@ add_action('admin_menu', 'AF_server_conf_menu_setup');
 #################################
 
 # Gutenberg stuff
+
+# partial fix for float/clear issue
+function af_plugin_styles () {
+	wp_register_style( 'af-plugin', plugin_dir_url(__FILE__) . 'styles.css' );
+	if (wp_get_theme()->get_stylesheet() == 'af-gutenberg') {
+		// af-gutenberg already includes a fix for this issue, so there's no need to load an extra resource
+		return;
+	}
+	wp_enqueue_style( 'af-plugin' );
+}
+add_action('wp_enqueue_scripts', 'af_plugin_styles');
+
 
 # to disable embeds:
 # https://rudrastyh.com/gutenberg/remove-default-blocks.html

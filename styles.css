@@ -1,0 +1,10 @@
+/* Support for clearing Gutenberg left floats. Using this stylesheet increases
+ * latency and therefore should be avoided if possible. It exists to avoid
+ * having to manually add custom CSS to new themes. The Among Friends Gutenberg
+ * theme already includes this clearfix, so it doesn't need to be loaded for
+ * that particular theme. See also:
+ * https://github.com/WordPress/gutenberg/issues/4127
+ */
+.clear-left {
+	clear: left;
+}
