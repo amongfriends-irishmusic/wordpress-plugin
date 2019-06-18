@@ -56,21 +56,6 @@ add_action('wp_dashboard_setup', 'AF_wp_dashboard_setup');
 
 ##################################
 
-// Transforming XHTML into HTML
-// <http://www.robertnyman.com/2006/09/20/how-to-deliver-html-instead-of-xhtml-with-wordpress/>
-function SB_wp_xml2html ($buffer) {
-	$XML = array(' />');
-	$HTML = array('>');
-	return str_replace($XML, $HTML, $buffer);
-}
-function SB_wp_xml2html_ob_start () {
-	ob_start('SB_wp_xml2html');
-}
-add_action('get_header', 'SB_wp_xml2html_ob_start');
-
-
-##################################
-
 // TODO: make sticky posts and/or announcement posts stand out in performances category
 
 
