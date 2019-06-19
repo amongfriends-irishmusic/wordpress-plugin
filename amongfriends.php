@@ -9,9 +9,9 @@
 
 /*
 Plugin Name: Among Friends Wordpress-Plugin
-Description: Dieses Plugin implementiert verschiedene Details der Among Friends–Website.
+Description: Dieses Plugin implementiert das Verhalten der Among Friends–Website.
 Author: Arne Johannessen
-Version: 0.8.0
+Version: 1.0.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -33,6 +33,7 @@ function AF_http_status() {
 	}
 }
 
+
 ##################################
 
 function AF_secure_http_links( $content ) {
@@ -43,6 +44,7 @@ function AF_secure_http_links( $content ) {
 }
 add_filter('content_save_pre', 'AF_secure_http_links');
 
+
 ##################################
 
 function AF_wp_dashboard_test() {
@@ -52,12 +54,6 @@ function AF_wp_dashboard_setup () {
 	wp_add_dashboard_widget('AF_wp_dashboard_test', 'Among Friends–Website', 'AF_wp_dashboard_test');
 }
 add_action('wp_dashboard_setup', 'AF_wp_dashboard_setup');
-
-
-##################################
-
-// TODO: make sticky posts and/or announcement posts stand out in performances category
-
 
 
 ##################################
@@ -152,6 +148,7 @@ function af_upcoming_performances_category_filter ($description, $category) {
 }
 add_filter('category_description', 'af_upcoming_performances_category_filter', 10, 2);
 
+
 #################################
 
 # disable Emoji stuff (for which Wordpress has a privacy leak as of 5.1)
@@ -162,10 +159,12 @@ remove_action('wp_print_styles', 'print_emoji_styles');
 # meta name=generator is something we dislike
 remove_action( 'wp_head' , 'wp_generator' );
 
+
 #################################
 
 # comments are currently disabled on this site, so a Comments feed doesn't make sense
 add_filter( 'feed_links_show_comments_feed', '__return_false' );
+
 
 #################################
 
@@ -210,11 +209,10 @@ abuse@ root</textarea>
 }
 add_action('admin_menu', 'AF_server_conf_menu_setup');
 
+
 #################################
 
-# Gutenberg stuff
-
-# partial fix for float/clear issue
+# partial workaround for Gutenberg float/clear issue
 function af_plugin_styles () {
 	wp_register_style( 'af-plugin', plugin_dir_url(__FILE__) . 'styles.css' );
 	if (wp_get_theme()->get_stylesheet() == 'af-gutenberg') {
@@ -224,12 +222,6 @@ function af_plugin_styles () {
 	wp_enqueue_style( 'af-plugin' );
 }
 add_action('wp_enqueue_scripts', 'af_plugin_styles');
-
-
-# to disable embeds:
-# https://rudrastyh.com/gutenberg/remove-default-blocks.html
-# https://wordpress.org/gutenberg/handbook/designers-developers/developers/filters/block-filters/
-
 
 
 ?>
