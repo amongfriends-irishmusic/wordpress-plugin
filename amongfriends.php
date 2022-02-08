@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2015,2019 Arne Johannessen
+ * Copyright (c) 2015,2019-2022 Arne Johannessen
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -11,12 +11,12 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert das Verhalten der Among Friends–Website.
 Author: Arne Johannessen
-Version: 1.0.0
+Version: 1.0.1
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
 
-// known minimum WP version 4.9, only tested with 5.2
+// known minimum WP version 4.9, only tested with 5.9
 
 
 #################################
@@ -102,7 +102,20 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 // implement AF shortcode
 function af_upcoming_performances($atts) {
 	if (! isset($atts['category']) || $atts['category'] == 'announcements') {
-		$atts['category'] = 'announcements';
+		unset($atts['category']);
+		$atts['post_type'] = 'post';
+		$atts['tax_query'] = array(
+			'relation' => 'AND',
+			array(
+				'terms' => array('announcements'),
+				'field' => 'slug',
+				'taxonomy' => 'category' ),
+			array(
+				'terms' => array('performances'),
+				'field' => 'slug',
+				'taxonomy' => 'category',
+				'include_children' => FALSE )
+		);
 		$atts['orderby'] = isset($atts['orderby']) ? $atts['orderby'] : 'date';
 		$atts['order'] = isset($atts['order']) ? $atts['order'] : 'ASC';
 	}

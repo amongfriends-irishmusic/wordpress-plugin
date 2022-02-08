@@ -71,6 +71,12 @@ To Do
 Changelog
 ---------
 
+1.0.1, 2022-02-08
+- Ensure `[af_upcoming category=announcements]` only displays posts that
+  also have the `performances` category (fixes URL paths, issue [#1][])
+
+[#1]: https://github.com/amongfriends-irishmusic/wordpress-plugin/issues/1
+
 1.0, 2019-06-19
 - Add skeletal documentation, general cleanup and final release
 - Remove XHTML-to-HTML transformation (not required for HTML5 parsers)
