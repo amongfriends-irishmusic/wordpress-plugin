@@ -11,7 +11,7 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert das Verhalten der Among Friends–Website.
 Author: Arne Johannessen
-Version: 1.0.1
+Version: 1.0.2
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
@@ -48,7 +48,8 @@ add_filter('content_save_pre', 'AF_secure_http_links');
 ##################################
 
 function AF_wp_dashboard_test() {
-	echo '<p><a href="/wp-admin/tools.php?page=af_server_conf">Server-Konfiguration</a>';
+	echo '<p><a href="/wp-admin/tools.php?page=af_server_conf">Server-Konfiguration</a> – E-Mail–Adressen und Apache'
+	   . '<p><a href="https://github.com/amongfriends-irishmusic">GitHub</a> – Software-Entwicklung: Theme und Plugin';
 }
 function AF_wp_dashboard_setup () {
 	wp_add_dashboard_widget('AF_wp_dashboard_test', 'Among Friends–Website', 'AF_wp_dashboard_test');

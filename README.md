@@ -71,6 +71,9 @@ To Do
 Changelog
 ---------
 
+1.0.2, 2022-03-26
+- Add GitHub link to dashboard
+
 1.0.1, 2022-02-08
 - Ensure `[af_upcoming category=announcements]` only displays posts that
   also have the `performances` category (fixes URL paths, issue [#1][])
