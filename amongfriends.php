@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2015,2019-2022 Arne Johannessen
+ * Copyright (c) 2015,2019-2023 Arne Johannessen
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -11,12 +11,12 @@
 Plugin Name: Among Friends Wordpress-Plugin
 Description: Dieses Plugin implementiert das Verhalten der Among Friends–Website.
 Author: Arne Johannessen
-Version: 1.0.2
+Version: 1.1.0
 Plugin URI: https://github.com/amongfriends-irishmusic/wordpress-plugin
 Author URI: https://github.com/johannessen
 */
 
-// known minimum WP version 4.9, only tested with 5.9
+// known minimum WP version 4.9, only tested with 6.3
 
 
 #################################
@@ -236,6 +236,31 @@ function af_plugin_styles () {
 	wp_enqueue_style( 'af-plugin' );
 }
 add_action('wp_enqueue_scripts', 'af_plugin_styles');
+
+
+#################################
+
+# Disabling Wordpress warnings that tend to be false alarms allows
+# us to focus on those warnings that might signify actual issues.
+add_filter( 'site_status_tests', function ($tests) {
+	# PHP security support is offered by Debian.
+	unset( $tests['direct']['php_version'] );
+	# Inactive plugins/themes have a smaller risk than active ones.
+	# The primary strategy to minimise the attack surface is to minimise
+	# the number of *active* plugins/themes. (And auto-update everything.)
+	unset( $tests['direct']['plugin_version'] );
+	unset( $tests['direct']['theme_version'] );
+	# The Among Friends site sees so little traffic that cache plugins provide
+	# neglegible benefit, yet they increase the attack surface (see above).
+	unset( $tests['direct']['persistent_object_cache'] );
+	#unset( $tests['async']['page_cache'] );
+	# The REST API availability check tends to complain about internal errors,
+	# such as 403s that never show up in any server log. The log-http-requests
+	# plugin can be used to see the error code, which typically is
+	# rest_cookie_invalid_nonce. This is related to a harmless backup import.
+	#unset( $tests['direct']['rest_availability'] );
+	return $tests;
+}, 10, 1);
 
 
 ?>

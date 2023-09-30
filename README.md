@@ -23,6 +23,7 @@ Features
 
 Additionally, developers have the option for a stacktrace for deprecated
 functions in third-party modules as a debugging aid.
+The plugin also removes false alarms from Site Health to make it more useful.
 
 [Posts in Page]: https://ivycat.com/wordpress/wordpress-plugins/posts-in-page/
 [#4127]: https://github.com/WordPress/gutenberg/issues/4127
@@ -70,6 +71,9 @@ To Do
 
 Changelog
 ---------
+
+1.1.0, 2023-09-30
+- Stop Site Health from crying wolf
 
 1.0.2, 2022-03-26
 - Add GitHub link to dashboard
